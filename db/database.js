@@ -1,10 +1,12 @@
 const mysql = require("mysql2/promise");
+require('dotenv').config();
+
 
 const pool = mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "websocket",
+    host: process.env.DB_HOST || "localhost",        // Valeur par défaut si non définie
+    user: process.env.DB_USER || "root",            // Valeur par défaut si non définie
+    password: process.env.DB_PASSWORD || "root",    // Valeur par défaut si non définie
+    database: process.env.DB_NAME || "websocket",   // Valeur par défaut si non définie
 });
 
 const userController = {
