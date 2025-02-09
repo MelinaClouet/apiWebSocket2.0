@@ -113,7 +113,7 @@ const userController = {
     },
     connectUser: async (req, res) => {
         try {
-            const [users] = await pool.query("SELECT id, name, email, longitude, latitude FROM users WHERE isConnected = 1");
+            const [users] = await pool.query("SELECT id, name, email, longitude, latitude FROM users WHERE isConnected = true");
             res.status(200).json(users);
         } catch (error) {
             console.error("Erreur lors de la récupération des utilisateurs:", error);
