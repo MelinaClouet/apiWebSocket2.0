@@ -64,7 +64,7 @@ const userController = {
     },
 
     updateUser: async (req, res) => {
-        const userId = req.params.id;
+        const userEmail = req.params.email;
         const { name, email, longitude, latitude } = req.body;
 
         if (!name || !email || longitude === undefined || latitude === undefined) {
@@ -80,8 +80,8 @@ const userController = {
 
         try {
             const [result] = await pool.execute(
-                "UPDATE users SET name = ?, email = ?, longitude = ?, latitude = ? WHERE id = ?",
-                [name, email, longitudeNum, latitudeNum, userId]
+                "UPDATE users SET name = ?, email = ?, longitude = ?, latitude = ? WHERE email = ?",
+                [name, email, longitudeNum, latitudeNum, userEmail]
             );
 
             if (result.affectedRows > 0) {
@@ -118,6 +118,44 @@ const userController = {
         } catch (error) {
             console.error("Erreur lors de la récupération des utilisateurs:", error);
             res.status(500).json({ message: "Erreur interne du serveur" });
+        }
+    },
+    getUserByEmail: async (req, res) => {  // Correction ici : (req, res)
+        const email = req.params.email; // ✅ Maintenant, req.params.email est bien défini
+
+        try {
+            const [user] = await pool.query(
+                "SELECT id, name, email, longitude, latitude FROM users WHERE email = ?",
+                [email]
+            );
+
+            if (user.length > 0) {
+                res.status(200).json(user[0]); // ✅ Retourner le premier utilisateur trouvé
+            } else {
+                res.status(200).json()
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération de l'utilisateur:", error);
+            res.status(500).json({ message: "Erreur interne du serveur" });
+        }
+    },
+    disconnectUser: async (req, res) => {
+        const userEmail = req.params.email;
+
+        try {
+            const [result] = await pool.execute(
+                "UPDATE users SET isConnected = false WHERE email = ?",
+                [userEmail]
+            );
+
+            if (result.affectedRows > 0) {
+                res.status(200).json({message: "Utilisateur déconnecté avec succès"});
+            } else {
+                res.status(404).json({message: "Utilisateur non trouvé"});
+            }
+        } catch (error) {
+            console.error("Erreur lors de la déconnexion de l'utilisateur:", error);
+            res.status(500).json({message: "Erreur interne du serveur"});
         }
     },
 };

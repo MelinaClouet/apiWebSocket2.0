@@ -16,9 +16,15 @@ router.get("/:id", userController.getUserById);
 router.post("/", userController.createUser);
 
 // Route pour mettre à jour un utilisateur
-router.put("/:id", userController.updateUser);
+router.put("/:email", userController.updateUser);
 
 // Route pour supprimer un utilisateur
 router.delete("/:id", userController.deleteUser);
+
+//Route pour recuperer un utilisateur par email
+router.get("/email/:email", userController.getUserByEmail);
+
+//Route pour déconnecter un utilisateur
+router.put("/disconnect/:email", userController.disconnectUser);
 
 module.exports = router;
